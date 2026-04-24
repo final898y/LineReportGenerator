@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINE 通報格式產生器 v6</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>LINE 通報格式產生器</h2>
+        
+        <div class="form-group">
+            <label>通知類別 (選「無」自動隱藏)</label>
+            <select id="type">
+                <option value="無(預設)">無(預設)</option>
+                <option value="廣宣">廣宣</option>
+                <option value="填報">填報</option>
+                <option value="通知">通知</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>通報單位</label>
+            <input type="text" id="unit" placeholder="例如：人事室、資訊處">
+        </div>
+
+        <div class="form-group">
+            <label>案由 (主旨) *</label>
+            <input type="text" id="subject" placeholder="請輸入重要主旨">
+        </div>
+
+        <div class="form-group">
+            <label>繳交期限</label>
+            <input type="datetime-local" id="deadline">
+        </div>
+
+        <div class="form-group">
+            <label>繳交方式 (可多選)</label>
+            <div class="checkbox-container">
+                <label class="checkbox-item"><input type="checkbox" name="method" value="紙本核章">紙本核章</label>
+                <label class="checkbox-item"><input type="checkbox" name="method" value="線上表單">線上表單</label>
+                <label class="checkbox-item"><input type="checkbox" name="method" value="檔案回傳">檔案回傳</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>詳細說明</label>
+            <textarea id="description" rows="3" placeholder="請輸入具體細節內容..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>相關備註 (可多選)</label>
+            <div class="checkbox-container">
+                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="無意見亦請回復無">無意見需回覆</label>
+                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="逾期不候">逾期不候</label>
+            </div>
+            <input type="text" id="note_custom" placeholder="其他自定義備註..." style="margin-top: 10px;">
+        </div>
+
+        <button onclick="generate()">產生並自動複製</button>
+
+        <div id="result-container">
+            <span class="result-label">預覽結果：</span>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
