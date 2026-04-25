@@ -1,60 +1,204 @@
-function generate() {
-    // 1. 資料抓取與清洗
-    const type = document.getElementById('type').value;
-    const unit = document.getElementById('unit').value.trim();
-    const subject = document.getElementById('subject').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const rawDeadline = document.getElementById('deadline').value;
-    const noteCustom = document.getElementById('note_custom').value.trim();
+/**
+ * LINE 通報格式產生器 v6 - Refactored
+ * 遵循 SOLID 原則，提升擴充性與可維護性
+ */
+
+/**
+ * 格式化模組 (Formatter Module)
+ * 專門負責資料的轉換與字串樣板組合 (Single Responsibility)
+ */
+const ReportFormatter = {
+  /**
+   * 格式化日期時間
+   */
+  formatDate(rawDate, dateLabel, timeLabel) {
+    if (!rawDate) return "未設定期限";
+    const [date, time] = rawDate.split("T");
+    const formattedDate = date.replace(/-/g, "/");
+    let result = formattedDate;
+    if (dateLabel) result += ` ${dateLabel}`;
+    result += ` ${time}`;
+    if (timeLabel) result += ` ${timeLabel}`;
+    return result;
+  },
+
+  /**
+   * 取得核取方塊的值並轉為清單格式
+   */
+  getChecklistItems(selector) {
+    const checked = Array.from(document.querySelectorAll(selector));
+    return checked.length > 0 
+      ? checked.map(el => "- " + el.value).join("\n")
+      : "- 未指定";
+  },
+
+  /**
+   * 整合備註內容並轉換為條列式編號
+   * @param {string[]} noteItems - 所有備註文字陣列
+   * @returns {string} 條列式字串
+   */
+  formatNotes(noteItems) {
+    const validNotes = noteItems.filter(item => item.trim() !== "");
+    if (validNotes.length === 0) return "無";
     
-    // 2. 表單驗證
-    if (!subject) {
-        alert("「案由」是必填欄位喔！");
-        document.getElementById('subject').focus();
-        return;
-    }
+    return validNotes
+      .map((note, index) => `${index + 1}. ${note}`)
+      .join("\n");
+  },
 
-    // 3. 欄位渲染邏輯
-    const typeRow = (type !== "無(預設)") ? `\`類別：\` ${type}\n` : "";
-    const unitRow = unit ? `通報單位： ${unit}\n` : "";
+  /**
+   * 產生最終的樣板字串
+   */
+  generate(data) {
+    const importantHeader = data.isImportant ? "`【重要】` \n" : "";
+    const unitRow = data.unit ? `通報單位： ${data.unit}\n` : "";
+    const formattedDeadline = this.formatDate(data.deadline, data.deadlineDateLabel, data.deadlineTimeLabel);
+    const notesContent = this.formatNotes(data.notes);
 
-    // 4. 日期格式化處理
-    const deadline = rawDeadline ? rawDeadline.replace('T', ' ').replace(/-/g, '/') : "未設定期限";
-
-    // 5. 繳交方式多選處理
-    const methods = Array.from(document.querySelectorAll('input[name="method"]:checked'))
-                         .map(el => "- " + el.value)
-                         .join('\n');
-
-    // 6. 備註整合
-    const noteOpts = Array.from(document.querySelectorAll('input[name="note_opt"]:checked'))
-                          .map(el => `【${el.value}】`);
-    if (noteCustom) noteOpts.push(`【${noteCustom}】`);
-    const noteFinal = noteOpts.length > 0 ? noteOpts.join('、') : "無";
-
-    // 7. 最終模板合成 (已補回通報單位)
-    const template = `\`【 案 件 通 報 】\`
+    return `${importantHeader}\`【 案 件 通 報 】\`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-${typeRow}${unitRow}案由： \`${subject}\`
-期限： \`${deadline}\`
+${unitRow}案由： \`${data.subject}\`
+期限： \`${formattedDeadline}\`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-繳交方式(都要)：
-${methods || "- 未指定"}
+繳交方式${data.methodRequirement}：
+${data.methods}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 詳細說明：
-${description || "無"}
+${data.description || "無"}
 
-備註： ${noteFinal}
+備註：
+${notesContent}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~`;
+  }
+};
 
-    // 8. 顯示與複製
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerText = template;
-    document.getElementById('result-container').style.display = 'block';
+/**
+ * 應用程式控制模組 (App Controller)
+ */
+const App = {
+  init() {
+    this.cacheDOM();
+    this.bindEvents();
+    // 預設增加一列自定義備註
+    this.addNoteRow();
+  },
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(template).then(() => {
-            alert("✅ 格式已更新並複製成功！");
-        });
+  cacheDOM() {
+    this.elements = {
+      isImportant: document.getElementById("is_important"),
+      unit: document.getElementById("unit"),
+      subject: document.getElementById("subject"),
+      deadline: document.getElementById("deadline"),
+      deadlineDateLabel: document.getElementById("deadline_date_label"),
+      deadlineTimeLabel: document.getElementById("deadline_time_label"),
+      methodRequirement: document.getElementById("method_requirement"),
+      description: document.getElementById("description"),
+      customNotesContainer: document.getElementById("custom-notes-container"),
+      addNoteBtn: document.getElementById("add-note-btn"),
+      result: document.getElementById("result"),
+      resultContainer: document.getElementById("result-container"),
+      generateBtn: document.getElementById("generate-btn")
+    };
+  },
+
+  bindEvents() {
+    this.elements.generateBtn.addEventListener("click", () => this.handleGenerate());
+    this.elements.addNoteBtn.addEventListener("click", () => this.addNoteRow());
+  },
+
+  /**
+   * 動態增加備註輸入列
+   */
+  addNoteRow() {
+    const div = document.createElement("div");
+    div.className = "note-row";
+    div.innerHTML = `
+      <input type="text" class="custom-note-input" placeholder="請輸入備註項目...">
+      <button type="button" class="remove-note-btn" title="刪除">✕</button>
+    `;
+    
+    // 綁定刪除事件
+    div.querySelector(".remove-note-btn").addEventListener("click", () => {
+      div.remove();
+    });
+
+    this.elements.customNotesContainer.appendChild(div);
+  },
+
+  /**
+   * 處理產生按鈕的邏輯
+   */
+  async handleGenerate() {
+    const subject = this.elements.subject.value.trim();
+    if (!subject) {
+      alert("「案由」是必填欄位喔！");
+      this.elements.subject.focus();
+      return;
     }
-}
+
+    // 收集所有備註 (Checkbox + 自定義輸入)
+    const notes = [
+      ...Array.from(document.querySelectorAll('input[name="note_opt"]:checked')).map(el => el.value),
+      ...Array.from(document.querySelectorAll('.custom-note-input')).map(el => el.value.trim())
+    ];
+
+    const formData = {
+      isImportant: this.elements.isImportant.checked,
+      unit: this.elements.unit.value.trim(),
+      subject: subject,
+      deadline: this.elements.deadline.value,
+      deadlineDateLabel: this.elements.deadlineDateLabel.value,
+      deadlineTimeLabel: this.elements.deadlineTimeLabel.value,
+      methodRequirement: this.elements.methodRequirement.value,
+      description: this.elements.description.value.trim(),
+      methods: ReportFormatter.getChecklistItems('input[name="method"]:checked'),
+      notes: notes
+    };
+
+    const template = ReportFormatter.generate(formData);
+    this.displayResult(template);
+    await this.copyToClipboard(template);
+  },
+
+  displayResult(text) {
+    this.elements.result.innerText = text;
+    this.elements.resultContainer.style.display = "block";
+    this.elements.resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  },
+
+  async copyToClipboard(text) {
+    if (!navigator.clipboard) {
+      this.fallbackCopyTextToClipboard(text);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      this.showCopyFeedback();
+    } catch (err) {
+      this.fallbackCopyTextToClipboard(text);
+    }
+  },
+
+  showCopyFeedback() {
+    const btn = this.elements.generateBtn;
+    const originalText = btn.innerText;
+    btn.innerText = "✓ 複製成功！";
+    btn.style.backgroundColor = "#05a647";
+    setTimeout(() => {
+      btn.innerText = originalText;
+      btn.style.backgroundColor = "";
+    }, 2000);
+  },
+
+  fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    this.showCopyFeedback();
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => App.init());

@@ -104,10 +104,137 @@ button {
     cursor: pointer;
     margin-top: 10px;
     box-shadow: 0 2px 4px rgba(6, 199, 85, 0.3);
+    transition: all 0.3s ease; /* 加入轉換動畫 */
 }
 
 button:active {
     transform: translateY(1px);
+    opacity: 0.9;
+}
+
+/* 深色模式支援 (Optimization: Dark Mode) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #E0E0E0;
+    }
+    .container {
+        background: #1E1E1E;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    input[type="text"],
+    input[type="datetime-local"],
+    select,
+    textarea {
+        background-color: #2D2D2D;
+        border-color: #444;
+        color: white;
+    }
+    .checkbox-item {
+        background: #2D2D2D;
+        border-color: #444;
+    }
+    #result {
+        background: #2D2D2D;
+        border-color: #555;
+        color: #BBB;
+    }
+}
+
+#method_requirement {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f0f4f8;
+    border: 1px solid #E0E0E0;
+    cursor: pointer;
+}
+
+.deadline-helper {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.deadline-helper select {
+    flex: 1;
+    font-size: 14px;
+    padding: 8px;
+    background-color: #f0f4f8;
+}
+
+@media (prefers-color-scheme: dark) {
+    .deadline-helper select,
+    #method_requirement {
+        background-color: #2D2D2D;
+        border-color: #444;
+        color: white;
+    }
+}
+
+.secondary-btn {
+    background-color: #f0f4f8;
+    color: #555;
+    border: 1.2px dashed #ccc;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 10px;
+    box-shadow: none;
+}
+
+.secondary-btn:hover {
+    background-color: #e2e8f0;
+    border-color: #999;
+}
+
+.note-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: stretch; /* 重要：強制所有子元素垂直填滿容器高度 */
+}
+
+.note-row input {
+    flex: 1;
+    /* 移除之前的 !important padding，讓它繼承全局設定，確保高度基線一致 */
+    margin: 0; 
+}
+
+.remove-note-btn {
+    background-color: #ffeded;
+    color: #ff4d4d;
+    border: 1.5px solid #ffccd2; /* 統一使用 1.5px 邊框，與輸入框對齊 */
+    border-radius: 8px; /* 統一圓角 */
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.remove-note-btn:hover {
+    background-color: #ff4d4d;
+    color: white;
+    border-color: #ff4d4d;
+}
+
+@media (prefers-color-scheme: dark) {
+    .secondary-btn {
+        background-color: #2D2D2D;
+        color: #BBB;
+        border-color: #444;
+    }
+    .remove-note-btn {
+        background-color: #3d1a1a;
+        color: #ff8080;
+        border-color: #5a2a2a;
+    }
 }
 
 #result-container {

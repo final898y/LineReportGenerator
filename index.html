@@ -11,13 +11,10 @@
         <h2>LINE 通報格式產生器</h2>
         
         <div class="form-group">
-            <label>通知類別 (選「無」自動隱藏)</label>
-            <select id="type">
-                <option value="無(預設)">無(預設)</option>
-                <option value="廣宣">廣宣</option>
-                <option value="填報">填報</option>
-                <option value="通知">通知</option>
-            </select>
+            <label>重要性標記</label>
+            <div class="checkbox-container">
+                <label class="checkbox-item"><input type="checkbox" id="is_important">標記為「重要」</label>
+            </div>
         </div>
 
         <div class="form-group">
@@ -33,10 +30,40 @@
         <div class="form-group">
             <label>繳交期限</label>
             <input type="datetime-local" id="deadline">
+            <div class="deadline-helper">
+                <select id="deadline_date_label">
+                    <option value="">日期補充 (無)</option>
+                    <option value="(今天)">(今天)</option>
+                    <option value="(明天)">(明天)</option>
+                    <option value="---" disabled>── 本週 ──</option>
+                    <option value="(本週三)">(本週三)</option>
+                    <option value="(本週四)">(本週四)</option>
+                    <option value="(本週五)">(本週五)</option>
+                    <option value="(本週內)">(本週內)</option>
+                    <option value="(盡速)">(盡速)</option>
+                    <option value="---" disabled>── 下週 ──</option>
+                    <option value="(下週一)">(下週一)</option>
+                    <option value="(下週二)">(下週二)</option>
+                    <option value="(下週三)">(下週三)</option>
+                    <option value="(下週四)">(下週四)</option>
+                    <option value="(下週五)">(下週五)</option>
+                </select>
+                <select id="deadline_time_label">
+                    <option value="">時間補充 (無)</option>
+                    <option value="中午前">中午前</option>
+                    <option value="下班前">下班前</option>
+                    <option value="會議前">會議前</option>
+                    <option value="下班後">下班後</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group">
             <label>繳交方式 (可多選)</label>
+            <select id="method_requirement">
+                <option value="(都要)">(都要)</option>
+                <option value="(任選一種)">(任選一種)</option>
+            </select>
             <div class="checkbox-container">
                 <label class="checkbox-item"><input type="checkbox" name="method" value="紙本核章">紙本核章</label>
                 <label class="checkbox-item"><input type="checkbox" name="method" value="線上表單">線上表單</label>
@@ -55,10 +82,13 @@
                 <label class="checkbox-item"><input type="checkbox" name="note_opt" value="無意見亦請回復無">無意見需回覆</label>
                 <label class="checkbox-item"><input type="checkbox" name="note_opt" value="逾期不候">逾期不候</label>
             </div>
-            <input type="text" id="note_custom" placeholder="其他自定義備註..." style="margin-top: 10px;">
+            <div id="custom-notes-container">
+                <!-- 動態增加的備註列將顯示在此 -->
+            </div>
+            <button type="button" id="add-note-btn" class="secondary-btn">+ 增加自定義備註</button>
         </div>
 
-        <button onclick="generate()">產生並自動複製</button>
+        <button type="button" id="generate-btn">產生並自動複製</button>
 
         <div id="result-container">
             <span class="result-label">預覽結果：</span>
