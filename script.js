@@ -79,6 +79,8 @@ const App = {
   init() {
     this.cacheDOM();
     this.bindEvents();
+    // 初始化選單狀態
+    this.updateMethodRequirementVisibility();
     // 預設增加一列自定義備註
     this.addNoteRow();
   },
@@ -104,6 +106,24 @@ const App = {
   bindEvents() {
     this.elements.generateBtn.addEventListener("click", () => this.handleGenerate());
     this.elements.addNoteBtn.addEventListener("click", () => this.addNoteRow());
+    
+    // 監聽繳交方式核取方塊的變動
+    document.querySelectorAll('input[name="method"]').forEach(el => {
+      el.addEventListener("change", () => this.updateMethodRequirementVisibility());
+    });
+  },
+
+  /**
+   * 根據勾選數量決定是否顯示「繳交方式」的需求選單
+   */
+  updateMethodRequirementVisibility() {
+    const checkedCount = document.querySelectorAll('input[name="method"]:checked').length;
+    // 只有在勾選 2 個以上時才顯示 (都要)/(任選一種)
+    if (checkedCount > 1) {
+      this.elements.methodRequirement.style.display = "inline-block";
+    } else {
+      this.elements.methodRequirement.style.display = "none";
+    }
   },
 
   /**
@@ -142,6 +162,8 @@ const App = {
       ...Array.from(document.querySelectorAll('.custom-note-input')).map(el => el.value.trim())
     ];
 
+    const checkedMethods = Array.from(document.querySelectorAll('input[name="method"]:checked'));
+
     const formData = {
       isImportant: this.elements.isImportant.checked,
       unit: this.elements.unit.value.trim(),
@@ -149,9 +171,12 @@ const App = {
       deadline: this.elements.deadline.value,
       deadlineDateLabel: this.elements.deadlineDateLabel.value,
       deadlineTimeLabel: this.elements.deadlineTimeLabel.value,
-      methodRequirement: this.elements.methodRequirement.value,
+      // 只有勾選超過 1 個才顯示 (都要) 或 (任選一種)
+      methodRequirement: checkedMethods.length > 1 ? this.elements.methodRequirement.value : "",
       description: this.elements.description.value.trim(),
-      methods: ReportFormatter.getChecklistItems('input[name="method"]:checked'),
+      methods: checkedMethods.length > 0 
+        ? checkedMethods.map(el => "- " + el.value).join("\n")
+        : "- 未指定",
       notes: notes
     };
 
