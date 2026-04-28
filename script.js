@@ -56,19 +56,19 @@ const ReportFormatter = {
     const notesContent = this.formatNotes(data.notes);
 
     return `${importantHeader}\`【 案 件 通 報 】\`
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 ${unitRow}案由： \`${data.subject}\`
 期限： \`${formattedDeadline}\`
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 繳交方式${data.methodRequirement}：
 ${data.methods}
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 詳細說明：
 ${data.description || "無"}
 
 備註：
 ${notesContent}
-~~~~~~~~~~~~~~~~~~~~~~~~~~`;
+~~~~~~~~~~~~~~~~~~~~~~~`;
   }
 };
 

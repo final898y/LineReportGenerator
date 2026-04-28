@@ -265,4 +265,7 @@ button:active {
     .checkbox-container {
         grid-template-columns: 1fr 1fr;
     }
+    .full-width {
+        grid-column: span 2;
+    }
 }
