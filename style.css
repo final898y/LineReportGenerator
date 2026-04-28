@@ -32,6 +32,62 @@ h2 {
     font-size: 1.5rem;
 }
 
+/* Tabs Layout */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: #F0F2F5;
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    color: #666;
+    border: none;
+    padding: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: none;
+    margin-top: 0;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.tab-btn:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--line-green);
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tabs {
+        background: #2D2D2D;
+    }
+    .tab-btn {
+        color: #BBB;
+    }
+    .tab-btn.active {
+        background: #444;
+        color: var(--line-green);
+    }
+}
+
 .form-group {
     margin-bottom: 20px;
 }

@@ -10,85 +10,149 @@
     <div class="container">
         <h2>LINE 通報格式產生器</h2>
         
-        <div class="form-group">
-            <label>重要性標記</label>
-            <div class="checkbox-container">
-                <label class="checkbox-item"><input type="checkbox" id="is_important">標記為「重要」</label>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab-general">一般模式</button>
+            <button class="tab-btn" data-tab="tab-weekly">週報模式</button>
+            <button class="tab-btn" data-tab="tab-announcement">公告模式</button>
+        </div>
+
+        <!-- 一般模式 -->
+        <div id="tab-general" class="tab-content active">
+            <div class="form-group">
+                <label>重要性標記</label>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" id="is_important">標記為「重要」</label>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label>通報單位</label>
-            <input type="text" id="unit" placeholder="例如：人事室、資訊處">
-        </div>
+            <div class="form-group">
+                <label>通報單位</label>
+                <input type="text" id="unit" placeholder="例如：人事室、資訊處">
+            </div>
 
-        <div class="form-group">
-            <label>案由 (主旨) *</label>
-            <input type="text" id="subject" placeholder="請輸入重要主旨">
-        </div>
+            <div class="form-group">
+                <label>案由 (主旨) *</label>
+                <input type="text" id="subject" placeholder="請輸入重要主旨">
+            </div>
 
-        <div class="form-group">
-            <label>繳交期限</label>
-            <input type="datetime-local" id="deadline">
-            <div class="deadline-helper">
-                <select id="deadline_date_label">
-                    <option value="">日期補充 (無)</option>
-                    <option value="(今天)">(今天)</option>
-                    <option value="(明天)">(明天)</option>
-                    <option value="---" disabled>── 本週 ──</option>
-                    <option value="(本週三)">(本週三)</option>
-                    <option value="(本週四)">(本週四)</option>
-                    <option value="(本週五)">(本週五)</option>
-                    <option value="(本週內)">(本週內)</option>
-                    <option value="(盡速)">(盡速)</option>
-                    <option value="---" disabled>── 下週 ──</option>
-                    <option value="(下週一)">(下週一)</option>
-                    <option value="(下週二)">(下週二)</option>
-                    <option value="(下週三)">(下週三)</option>
-                    <option value="(下週四)">(下週四)</option>
-                    <option value="(下週五)">(下週五)</option>
+            <div class="form-group">
+                <label>繳交期限</label>
+                <input type="datetime-local" id="deadline">
+                <div class="deadline-helper">
+                    <select id="deadline_date_label">
+                        <option value="">日期補充 (無)</option>
+                        <option value="(今天)">(今天)</option>
+                        <option value="(明天)">(明天)</option>
+                        <option value="---" disabled>── 本週 ──</option>
+                        <option value="(本週三)">(本週三)</option>
+                        <option value="(本週四)">(本週四)</option>
+                        <option value="(本週五)">(本週五)</option>
+                        <option value="(本週內)">(本週內)</option>
+                        <option value="(盡速)">(盡速)</option>
+                        <option value="---" disabled>── 下週 ──</option>
+                        <option value="(下週一)">(下週一)</option>
+                        <option value="(下週二)">(下週二)</option>
+                        <option value="(下週三)">(下週三)</option>
+                        <option value="(下週四)">(下週四)</option>
+                        <option value="(下週五)">(下週五)</option>
+                    </select>
+                    <select id="deadline_time_label">
+                        <option value="">時間補充 (無)</option>
+                        <option value="中午前">中午前</option>
+                        <option value="下班前">下班前</option>
+                        <option value="會議前">會議前</option>
+                        <option value="下班後">下班後</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>繳交方式 (可多選)</label>
+                <select id="method_requirement">
+                    <option value="(都要)">(都要)</option>
+                    <option value="(任選一種)">(任選一種)</option>
                 </select>
-                <select id="deadline_time_label">
-                    <option value="">時間補充 (無)</option>
-                    <option value="中午前">中午前</option>
-                    <option value="下班前">下班前</option>
-                    <option value="會議前">會議前</option>
-                    <option value="下班後">下班後</option>
-                </select>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" name="method" value="紙本核章">紙本核章</label>
+                    <label class="checkbox-item"><input type="checkbox" name="method" value="線上表單">線上表單</label>
+                    <label class="checkbox-item"><input type="checkbox" name="method" value="檔案回傳">檔案回傳</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>詳細說明</label>
+                <textarea id="description" rows="3" placeholder="請輸入具體細節內容..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>相關備註 (可多選)</label>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" name="note_opt" value="無意見亦請回復無">無意見需回覆</label>
+                    <label class="checkbox-item"><input type="checkbox" name="note_opt" value="逾期不候">逾期不候</label>
+                    <label class="checkbox-item"><input type="checkbox" name="note_opt" value="請依限回覆，以利後續彙整作業">請依限回覆</label>
+                    <label class="checkbox-item"><input type="checkbox" name="note_opt" value="本案為預行通知，公文隨後補發">公文後補</label>
+                    <label class="checkbox-item full-width"><input type="checkbox" name="note_opt" value="請涉及以 上項目單位回覆後，經科長核章送處總務彙整">經科長核章送處總務彙整</label>
+                </div>
+                <div id="custom-notes-container"></div>
+                <button type="button" id="add-note-btn" class="secondary-btn">+ 增加自定義備註</button>
             </div>
         </div>
 
-        <div class="form-group">
-            <label>繳交方式 (可多選)</label>
-            <select id="method_requirement">
-                <option value="(都要)">(都要)</option>
-                <option value="(任選一種)">(任選一種)</option>
-            </select>
-            <div class="checkbox-container">
-                <label class="checkbox-item"><input type="checkbox" name="method" value="紙本核章">紙本核章</label>
-                <label class="checkbox-item"><input type="checkbox" name="method" value="線上表單">線上表單</label>
-                <label class="checkbox-item"><input type="checkbox" name="method" value="檔案回傳">檔案回傳</label>
+        <!-- 週報模式 -->
+        <div id="tab-weekly" class="tab-content">
+            <div class="form-group">
+                <label>重要性標記</label>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" id="weekly_is_important" checked>標記為「重要」</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>案由</label>
+                <input type="text" id="weekly_subject" value="處務會議資料填報">
+            </div>
+
+            <div class="form-group">
+                <label>繳交期限</label>
+                <input type="datetime-local" id="weekly_deadline">
+                <div class="deadline-helper">
+                    <select id="weekly_deadline_date_label">
+                        <option value="(今天)">(今天)</option>
+                        <option value="(明天)" selected>(明天)</option>
+                        <option value="(下週一)">(下週一)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>會議時間 (說明第1點)</label>
+                <input type="text" id="weekly_meeting_time" placeholder="例如：明天(4/28)下午02:00">
+            </div>
+
+            <div class="form-group">
+                <label>雲端連結 (說明第2點)</label>
+                <input type="text" id="weekly_cloud_link" placeholder="請貼上 Google Sheet 連結">
             </div>
         </div>
 
-        <div class="form-group">
-            <label>詳細說明</label>
-            <textarea id="description" rows="3" placeholder="請輸入具體細節內容..."></textarea>
-        </div>
+        <!-- 公告模式 -->
+        <div id="tab-announcement" class="tab-content">
+            <div class="form-group">
+                <label>重要性標記</label>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" id="ann_is_important">標記為「重要」</label>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label>相關備註 (可多選)</label>
-            <div class="checkbox-container">
-                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="無意見亦請回復無">無意見需回覆</label>
-                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="逾期不候">逾期不候</label>
-                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="請依限回覆，以利後續彙整作業">請依限回覆</label>
-                <label class="checkbox-item"><input type="checkbox" name="note_opt" value="本案為預行通知，公文隨後補發">公文後補</label>
-                <label class="checkbox-item full-width"><input type="checkbox" name="note_opt" value="請涉及以上項目單位回覆後，經科長核章送處總務彙整">經科長核章送處總務彙整</label>
+            <div class="form-group">
+                <label>公告標題 (案由) *</label>
+                <input type="text" id="ann_subject" placeholder="請輸入公告標題">
             </div>
-            <div id="custom-notes-container">
-                <!-- 動態增加的備註列將顯示在此 -->
+
+            <div class="form-group">
+                <label>公告內容 (詳細說明)</label>
+                <textarea id="ann_description" rows="6" placeholder="請輸入公告具體內容..."></textarea>
             </div>
-            <button type="button" id="add-note-btn" class="secondary-btn">+ 增加自定義備註</button>
         </div>
 
         <button type="button" id="generate-btn">產生並自動複製</button>
