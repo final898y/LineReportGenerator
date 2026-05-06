@@ -21,9 +21,13 @@ const App = {
       generateBtn: document.getElementById("generate-btn"),
       result: document.getElementById("result"),
       resultContainer: document.getElementById("result-container"),
-      customNotesContainer: document.getElementById("custom-notes-container"),
-      addNoteBtn: document.getElementById("add-note-btn"),
-      methodRequirement: document.getElementById("method_requirement")
+      addNoteBtns: document.querySelectorAll(".add-note-btn"),
+      methodRequirement: document.getElementById("method_requirement"),
+      templateSelect: document.getElementById("template_select"),
+      deptMeetingFields: document.getElementById("dept_meeting_fields"),
+      industryBriefFields: document.getElementById("industry_mayor_brief_fields"),
+      cloudLinkLabel: document.getElementById("cloud_link_label"),
+      cloudLinkGroup: document.getElementById("cloud_link_group")
     };
   },
 
@@ -33,8 +37,15 @@ const App = {
       btn.addEventListener("click", () => this.switchTab(btn.dataset.tab));
     });
 
-    // 增加備註
-    this.elements.addNoteBtn.addEventListener("click", () => this.addNoteRow());
+    // 增加備註 (多個按鈕)
+    this.elements.addNoteBtns.forEach(btn => {
+      btn.addEventListener("click", () => this.addNoteRow(btn.dataset.container));
+    });
+
+    // 模板切換
+    if (this.elements.templateSelect) {
+      this.elements.templateSelect.addEventListener("change", (e) => this.handleTemplateChange(e.target.value));
+    }
 
     // 繳交方式變更監聽
     document.querySelectorAll('input[name="method"]').forEach(el => {
@@ -52,6 +63,10 @@ const App = {
         mode.init();
       }
     });
+    // 初始化模板顯示狀態
+    if (this.elements.templateSelect) {
+      this.handleTemplateChange(this.elements.templateSelect.value);
+    }
   },
 
   switchTab(tabId) {
@@ -65,6 +80,32 @@ const App = {
     this.elements.resultContainer.style.display = "none";
   },
 
+  handleTemplateChange(templateValue) {
+    const isDeptMeeting = templateValue === 'dept_meeting';
+    const isIndustryBrief = templateValue === 'industry_mayor_brief';
+
+    if (this.elements.deptMeetingFields) {
+      this.elements.deptMeetingFields.style.display = isDeptMeeting ? 'block' : 'none';
+    }
+    if (this.elements.industryBriefFields) {
+      this.elements.industryBriefFields.style.display = isIndustryBrief ? 'block' : 'none';
+    }
+    if (this.elements.cloudLinkGroup) {
+      this.elements.cloudLinkGroup.style.display = isIndustryBrief ? 'none' : 'block';
+    }
+    if (this.elements.cloudLinkLabel) {
+      this.elements.cloudLinkLabel.innerText = isDeptMeeting ? '雲端連結 (說明第2點)' : '雲端連結';
+    }
+    
+    // 更新案由預設值
+    const subjectInput = document.getElementById("weekly_subject");
+    if (subjectInput) {
+      if (isDeptMeeting) subjectInput.value = "處務會議資料填報";
+      else if (isIndustryBrief) subjectInput.value = "本周產業發展處市長面報簡報資料";
+      else subjectInput.value = "本週市長週報";
+    }
+  },
+
   updateMethodRequirementVisibility() {
     const checkedCount = document.querySelectorAll('input[name="method"]:checked').length;
     if (this.elements.methodRequirement) {
@@ -72,7 +113,10 @@ const App = {
     }
   },
 
-  addNoteRow() {
+  addNoteRow(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
     const div = document.createElement("div");
     div.className = "note-row";
     div.innerHTML = `
@@ -80,7 +124,7 @@ const App = {
       <button type="button" class="remove-note-btn" title="刪除">✕</button>
     `;
     div.querySelector(".remove-note-btn").addEventListener("click", () => div.remove());
-    this.elements.customNotesContainer.appendChild(div);
+    container.appendChild(div);
   },
 
   async handleGenerate() {

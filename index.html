@@ -12,7 +12,7 @@
         
         <div class="tabs">
             <button class="tab-btn active" data-tab="tab-general">一般模式</button>
-            <button class="tab-btn" data-tab="tab-weekly">週報模式</button>
+            <button class="tab-btn" data-tab="tab-weekly">模板模式</button>
             <button class="tab-btn" data-tab="tab-announcement">公告模式</button>
         </div>
 
@@ -93,13 +93,22 @@
                     <label class="checkbox-item"><input type="checkbox" name="note_opt" value="本案為預行通知，公文隨後補發">公文後補</label>
                     <label class="checkbox-item full-width"><input type="checkbox" name="note_opt" value="請涉及以上項目單位回覆後，經科長核章送處總務彙整">經科長核章送處總務彙整</label>
                 </div>
-                <div id="custom-notes-container"></div>
-                <button type="button" id="add-note-btn" class="secondary-btn">+ 增加自定義備註</button>
+                <div id="custom-notes-container-general"></div>
+                <button type="button" class="secondary-btn add-note-btn" data-container="custom-notes-container-general">+ 增加自定義備註</button>
             </div>
         </div>
 
-        <!-- 週報模式 -->
+        <!-- 模板模式 (原週報模式) -->
         <div id="tab-weekly" class="tab-content">
+            <div class="form-group">
+                <label>選擇模板</label>
+                <select id="template_select">
+                    <option value="dept_meeting">處務會議資料填報</option>
+                    <option value="mayor_weekly">本週市長週報</option>
+                    <option value="industry_mayor_brief">產發處市長面報</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>重要性標記</label>
                 <div class="checkbox-container">
@@ -117,21 +126,55 @@
                 <input type="datetime-local" id="weekly_deadline">
                 <div class="deadline-helper">
                     <select id="weekly_deadline_date_label">
+                        <option value="">日期補充 (無)</option>
                         <option value="(今天)">(今天)</option>
                         <option value="(明天)" selected>(明天)</option>
+                        <option value="(本週內)">(本週內)</option>
+                        <option value="(盡速)">(盡速)</option>
                         <option value="(下週一)">(下週一)</option>
+                    </select>
+                    <select id="weekly_deadline_time_label">
+                        <option value="">時間補充 (無)</option>
+                        <option value="中午前" selected>中午前</option>
+                        <option value="下班前">下班前</option>
                     </select>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>會議時間 (說明第1點)</label>
-                <input type="text" id="weekly_meeting_time" placeholder="例如：明天(4/28)下午02:00">
+            <div id="dept_meeting_fields">
+                <div class="form-group">
+                    <label>會議時間 (說明第1點)</label>
+                    <input type="text" id="weekly_meeting_time" placeholder="例如：明天(4/28)下午02:00">
+                </div>
+            </div>
+
+            <!-- 產發處市長面報專用欄位 -->
+            <div id="industry_mayor_brief_fields" style="display: none;">
+                <div class="form-group">
+                    <label>報告事項</label>
+                    <textarea id="industry_report_items" rows="8">1. 風箏節目前進度
+2. 科技產業論壇籌辦進度
+3. 香山狗狗公園開工典禮籌備進度與流程安排(已交)
+4. 購物節目前進度
+5. 濕地藝術季目前規劃(已交)
+6. 市場加倍券的內容與期程
+7. 其他產發處擬請示事項</textarea>
+                </div>
+            </div>
+
+            <div class="form-group" id="cloud_link_group">
+                <label id="cloud_link_label">雲端連結 (說明第2點)</label>
+                <input type="text" id="weekly_cloud_link" placeholder="請貼上連結">
             </div>
 
             <div class="form-group">
-                <label>雲端連結 (說明第2點)</label>
-                <input type="text" id="weekly_cloud_link" placeholder="請貼上 Google Sheet 連結">
+                <label>相關備註 (可多選)</label>
+                <div class="checkbox-container">
+                    <label class="checkbox-item"><input type="checkbox" name="weekly_note_opt" value="請依限回覆，以利後續彙整作業">請依限回覆</label>
+                    <label class="checkbox-item"><input type="checkbox" name="weekly_note_opt" value="逾期不候">逾期不候</label>
+                </div>
+                <div id="custom-notes-container-weekly"></div>
+                <button type="button" class="secondary-btn add-note-btn" data-container="custom-notes-container-weekly">+ 增加自定義備註</button>
             </div>
         </div>
 
